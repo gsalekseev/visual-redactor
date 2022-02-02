@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -39,20 +40,15 @@ namespace Application
         
         public Scene CurrentScene { get; set; }
         
-        public Bitmap Present()
+        public Bitmap Present(Guid selectedCameraId)
         {
-            PreparePresentation();
+            var camera = this.CurrentScene.Cameras.First(c => c.Id == selectedCameraId);
             
-            var camerasBitmaps = CurrentScene.Cameras.Select(c => _cameraRenderer.Render(c));
-            var lightsBitmap = CurrentScene.LightSources.Select(c => _lightRenderer.Render(c));
+            _lightProcessor.ApplyLightToModel(camera, CurrentScene.Model, CurrentScene.LightSources);
+            _projector.ProjectView(camera, CurrentScene.Model);
+            
             var modelBitmap = _modelRenderer.Render(CurrentScene.Model);
-
-            var allBitmaps = new List<Bitmap>();
-            allBitmaps.AddRange(camerasBitmaps);
-            allBitmaps.AddRange(lightsBitmap);
-            allBitmaps.Add(modelBitmap);
-
-            return allBitmaps.Aggregate(ConcatBitmaps);
+            return modelBitmap;
         }
 
         public void SetCurrentScene(string path)
@@ -60,17 +56,18 @@ namespace Application
             CurrentScene = _sceneLoader.Load(path);
         }
 
-        public void SaveToFile(string path)
+        public void SaveModelToFile(string path)
         {
-            var bitmap = Present();
+            var bitmap = _modelRenderer.Render(CurrentScene.Model);
             using var f = File.Create(path);
             bitmap.Save(f, ImageFormat.Bmp);
         }
 
-        private void PreparePresentation()
+        public void SavePresentationToFile(Guid presentationCameraId, string path)
         {
-            _lightProcessor.ApplyLightToModel(CurrentScene.Model, CurrentScene.LightSources);
-            _projector.ProjectView(CurrentScene.Cameras, CurrentScene.Model);
+            var presentation = Present(presentationCameraId);
+            using var f = File.Create(path);
+            presentation.Save(f, ImageFormat.Bmp);
         }
 
         private Bitmap ConcatBitmaps(Bitmap bmp1, Bitmap bmp2)

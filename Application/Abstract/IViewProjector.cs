@@ -10,8 +10,8 @@ namespace Application.Abstract
         /// <summary>
         /// Провести проекцию вида
         /// </summary>
-        /// <param name="cameras">Множество камер для проекции</param>
+        /// <param name="camera">Камера, с которой проводится проекция</param>
         /// <param name="model">Модель</param>
-        void ProjectView(Camera[] cameras, VisualModel model);
+        void ProjectView(Camera camera, VisualModel model);
     }
 }

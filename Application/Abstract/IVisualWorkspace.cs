@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Domain;
 
 namespace Application.Abstract
@@ -10,10 +11,11 @@ namespace Application.Abstract
     {
         public Scene CurrentScene { get; }
 
-        public Bitmap Present();
+        public Bitmap Present(Guid selectedCameraId);
 
         public void SetCurrentScene(string path);
 
-        public void SaveToFile(string path);
+        public void SaveModelToFile(string path);
+        public void SavePresentationToFile(Guid presentationCameraId, string path);
     }
 }

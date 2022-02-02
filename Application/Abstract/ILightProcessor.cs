@@ -4,6 +4,6 @@ namespace Application.Abstract
 {
     public interface ILightProcessor
     {
-        VisualModel ApplyLightToModel(VisualModel m, LightSource[] lights);
+        VisualModel ApplyLightToModel(Camera currentCamera, VisualModel m, LightSource[] lights);
     }
 }
