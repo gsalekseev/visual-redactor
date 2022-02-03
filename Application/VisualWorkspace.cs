@@ -5,13 +5,12 @@ using System.IO;
 using System.Linq;
 using Application.Abstract;
 using Domain;
-using Infrastructure;
 
 namespace Application
 {
     public class VisualWorkspace : IVisualWorkspace
     {
-        private readonly ISceneLoader _sceneLoader; 
+        private readonly ISceneRepository _sceneLoader; 
         private readonly IRenderer<LightSource> _lightRenderer; 
         private readonly IRenderer<VisualModel> _modelRenderer; 
         private readonly IRenderer<Camera> _cameraRenderer; 
@@ -21,7 +20,7 @@ namespace Application
         private readonly ICameraEditor _cameraEditor;
         private readonly ILightProcessor _lightProcessor;
 
-        public VisualWorkspace(ISceneLoader sceneLoader, IRenderer<LightSource> lightRenderer,
+        public VisualWorkspace(ISceneRepository sceneLoader, IRenderer<LightSource> lightRenderer,
             IRenderer<VisualModel> modelRenderer, IRenderer<Camera> cameraRenderer,
             IViewProjector projector, ILightsEditor lightsEditor, IPolygonEditor polygonEditor,
             ICameraEditor cameraEditor, ILightProcessor lightProcessor)
@@ -52,7 +51,7 @@ namespace Application
 
         public void SetCurrentScene(string path)
         {
-            CurrentScene = _sceneLoader.Load(path);
+            CurrentScene = _sceneLoader.Get(path);
         }
 
         public void SaveModelToFile(string path)
